@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>С Днем Рождения, папа! — Живая открытка</title>
+  <style>
+    :root {
+      --bg: #0e1020;
+      --card: #1a1f36;
+      --accent: #ffd166;
+      --blue: #4ecdc4;
+      --pink: #ff6b6b;
+      --text: #e8e6f0;
+      --shadow: rgba(0, 0, 0, 0.4);
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      width: 100%;
+      min-height: 100%;
+    }
+    body {
+      font-family: 'Trebuchet MS', 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #0a0f1b 0%, #0e1020 60%, #0a0f1b 100%);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ========== АНИМИРОВАННЫЙ ФОН (частицы) ========== */
+    #particles-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      pointer-events: none;   /* чтобы не мешать кликам по кнопкам */
+      z-index: 0;
+      opacity: 0.65;
+      transition: opacity 0.3s ease;
+    }
+
+    /* карточка — поверх живого фона */
+    .card {
+      width: min(900px, 92vw);
+      background: linear-gradient(135deg, rgba(26, 31, 54, 0.94), rgba(26, 31, 54, 0.88));
+      backdrop-filter: blur(2px);
+      border-radius: 20px;
+      padding: 28px 28px 32px;
+      position: relative;
+      box-shadow: 0 25px 45px var(--shadow);
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      z-index: 2;
+      transition: transform 0.2s ease, box-shadow 0.2s;
+    }
+    .card:hover {
+      box-shadow: 0 30px 55px rgba(0, 0, 0, 0.5);
+    }
+
+    /* декоративные элементы (кольцо и сердце) — остаются */
+    .ring {
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      right: -60px;
+      top: -60px;
+      border: 8px solid rgba(255, 214, 102, 0.28);
+      filter: blur(2px);
+      animation: spin 22s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .heart {
+      position: absolute;
+      left: -40px;
+      bottom: -40px;
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle at 30% 30%, #ffd1dc 0 25%, transparent 26%),
+                  radial-gradient(circle at 70% 70%, #ffd1dc 0 25%, transparent 26%);
+      transform: rotate(-25deg);
+      filter: drop-shadow(0 6px 12px rgba(255, 107, 107, 0.5));
+      clip-path: polygon(50% 0%, 100% 30%, 85% 100%, 15% 100%, 0% 30%);
+      opacity: 0.55;
+      pointer-events: none;
+      z-index: 0;
+      animation: floatHeart 6s ease-in-out infinite;
+    }
+    @keyframes floatHeart {
+      0% { transform: rotate(-25deg) translateY(0px); }
+      50% { transform: rotate(-25deg) translateY(-8px); }
+      100% { transform: rotate(-25deg) translateY(0px); }
+    }
+
+    /* типографика */
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.5px;
+      font-weight: 800;
+      background: linear-gradient(120deg, #fff5e0, #ffd97c);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    h2 {
+      margin: 8px 0 18px;
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--accent);
+      letter-spacing: 0.3px;
+    }
+    p {
+      line-height: 1.65;
+      font-size: 16px;
+      color: #f5f2ff;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    }
+    .badge-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin: 18px 0 24px;
+    }
+    .badge {
+      background: rgba(78, 236, 203, 0.18);
+      color: #cffff7;
+      border: 1px solid rgba(78, 236, 203, 0.6);
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 13px;
+      backdrop-filter: blur(3px);
+      transition: all 0.2s;
+    }
+    .badge:hover {
+      background: rgba(78, 236, 203, 0.35);
+      transform: scale(1.02);
+    }
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 24px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, rgba(74, 144, 226, 0.9), rgba(255, 107, 107, 0.85));
+      color: white;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 15px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      backdrop-filter: blur(2px);
+    }
+    .cta:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 22px rgba(0, 0, 0, 0.4);
+      background: linear-gradient(135deg, rgba(90, 160, 240, 0.95), rgba(255, 120, 120, 0.9));
+    }
+
+    /* стихотворный блок (вместо удалённой таблички "Идеи подарков") */
+    .poem-block {
+      margin-top: 28px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 18px;
+      padding: 18px 22px;
+      transition: all 0.2s;
+      backdrop-filter: blur(4px);
+    }
+    .poem-block strong {
+      font-size: 16px;
+      color: #ffecb3;
+      display: block;
+      margin-bottom: 10px;
+      letter-spacing: 0.5px;
+    }
+    .poem-block span {
+      font-size: 15px;
+      color: #e2defa;
+      line-height: 1.5;
+      display: inline-block;
+      font-style: italic;
+    }
+    /* лёгкая анимация для блока стихов */
+    .poem-block {
+      transition: transform 0.2s;
+    }
+    .poem-block:hover {
+      transform: translateX(6px);
+      background: rgba(255, 255, 255, 0.09);
+      border-color: rgba(255, 214, 102, 0.5);
+    }
+
+    /* адаптивность: на маленьких экранах */
+    @media (max-width: 700px) {
+      .card {
+        padding: 22px 20px 28px;
+      }
+      .ring {
+        width: 220px;
+        height: 220px;
+        right: -40px;
+        top: -40px;
+      }
+      .heart {
+        width: 100px;
+        height: 100px;
+        left: -20px;
+        bottom: -20px;
+      }
+      .badge {
+        font-size: 11px;
+        padding: 6px 12px;
+      }
+      .poem-block {
+        padding: 14px 18px;
+      }
+      .poem-block span {
+        font-size: 13px;
+      }
+    }
+
+    /* Доп. блеск — для лучшего контраста с частицами */
+    .card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 20% 30%, rgba(255,210,90,0.05), transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Canvas для оживлённого заднего фона (частицы, звёздное мерцание) -->
+  <canvas id="particles-canvas"></canvas>
+
+  <div class="card" aria-label="Поздравление с днем рождения папы">
+    <div class="ring" aria-hidden="true"></div>
+    <div class="heart" aria-hidden="true"></div>
+
+    <h1>С днем рождения, папа! 🎉</h1>
+    <h2>Для самого крутого папы в мире</h2>
+
+    <p>
+      Пусть в твоем дне будет столько улыбок, сколько ты находишь носков после стирки (а это почти всегда много). Пусть
+      здоровье крепче крепкого кофе, а настроение — как любимый плейлист: только заряжает энергией!
+    </p>
+
+    <div class="badge-row" aria-label="праздничные приметы">
+      <span class="badge">✨ Спортивный спорт</span>
+      <span class="badge">😂 Смех до слез</span>
+      <span class="badge">👨‍🍳 Непобедимый мастер хорошего настроя</span>
+    </div>
+
+    <a href="#" class="cta" onclick="alert('Пап, ты лучший! 🎂 Обнимаю крепко!'); return false;">
+      🎁 Заказать у папы вкусный пирог (моя помощь — аплодисменты)
+    </a>
+
+    <!-- Блок "Короткий стих" (вместо удалённой таблички с идеями подарков) -->
+    <div class="poem-block" aria-label="поздравление в стихах">
+      <strong>📖 Короткий стих</strong>
+      <span>Папа, ты как Wi‑Fi — всегда рядом, даришь скорость и связь. С днем рождения!</span>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      // --- Анимированные частицы для оживления заднего фона ---
+      const canvas = document.getElementById('particles-canvas');
+      let ctx = canvas.getContext('2d');
+      let width = window.innerWidth;
+      let height = window.innerHeight;
+      
+      // параметры частиц
+      let particles = [];
+      const PARTICLE_COUNT = 110;        // оптимально для динамики, но не тормозит
+      const MAX_SPEED = 0.35;
+      const MIN_RADIUS = 1.5;
+      const MAX_RADIUS = 4.2;
+      
+      // цвета в стиле открытки (тёплые, голубые, золотистые)
+      const colorPalette = [
+        'rgba(255, 209, 102, 0.55)',  // золотистый
+        'rgba(78, 236, 203, 0.5)',    // бирюзовый
+        'rgba(255, 107, 107, 0.5)',   // нежно-розовый
+        'rgba(255, 180, 90, 0.55)',   // янтарный
+        'rgba(170, 220, 255, 0.45)',  // светлый лазурный
+        'rgba(255, 230, 160, 0.6)'    // тёплый кремовый
+      ];
+      
+      class FloatingParticle {
+        constructor(x, y, radius, speedX, speedY, color, alphaSpeed = 0.002) {
+          this.x = x;
+          this.y = y;
+          this.radius = radius;
+          this.speedX = speedX;
+          this.speedY = speedY;
+          this.color = color;
+          this.alpha = 0.5 + Math.random() * 0.4;
+          this.alphaDir = (Math.random() > 0.5 ? 1 : -1) * (0.002 + Math.random() * 0.006);
+          this.initialAlpha = this.alpha;
+        }
+        
+        update() {
+          // движение
+          this.x += this.speedX;
+          this.y += this.speedY;
+          
+          // граничные условия: мягкое появление с противоположной стороны + небольшая задержка для непрерывности
+          if (this.x + this.radius < 0) this.x = width + this.radius;
+          if (this.x - this.radius > width) this.x = -this.radius;
+          if (this.y + this.radius < 0) this.y = height + this.radius;
+          if (this.y - this.radius > height) this.y = -this.radius;
+          
+          // плавное мерцание прозрачности (оживление)
+          this.alpha += this.alphaDir;
+          if (this.alpha <= 0.25) {
+            this.alpha = 0.25;
+            this.alphaDir = Math.abs(this.alphaDir);
+          } else if (this.alpha >= 0.85) {
+            this.alpha = 0.85;
+            this.alphaDir = -Math.abs(this.alphaDir);
+          }
+        }
+        
+        draw(ctx) {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+          // цвет с динамической прозрачностью
+          let dynamicColor = this.color.replace(/[\d\.]+\)$/g, `${this.alpha})`);
+          ctx.fillStyle = dynamicColor;
+          ctx.fill();
+          // добавим легкое свечение для некоторых частиц
+          if (this.radius > 2.8) {
+            ctx.shadowBlur = 6;
+            ctx.shadowColor = 'rgba(255,210,100,0.3)';
+            ctx.fill();
+            ctx.shadowBlur = 0;
+          }
+        }
+      }
+      
+      function initParticles() {
+        particles = [];
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+          let radius = MIN_RADIUS + Math.random() * (MAX_RADIUS - MIN_RADIUS);
+          let x = Math.random() * (width + radius * 2) - radius;
+          let y = Math.random() * (height + radius * 2) - radius;
+          let speedX = (Math.random() - 0.5) * MAX_SPEED * 1.2;
+          let speedY = (Math.random() - 0.5) * MAX_SPEED * 1.2;
+          // дополнительные медленные частицы для глубины
+          if (Math.random() > 0.7) {
+            speedX *= 0.5;
+            speedY *= 0.5;
+          }
+          let color = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+          particles.push(new FloatingParticle(x, y, radius, speedX, speedY, color));
+        }
+        // добавим чуть больше "звездочек" поменьше для объема
+        for (let i = 0; i < 35; i++) {
+          let radius = 1.2 + Math.random() * 1.8;
+          let x = Math.random() * width;
+          let y = Math.random() * height;
+          let speedX = (Math.random() - 0.5) * 0.25;
+          let speedY = (Math.random() - 0.5) * 0.25;
+          let color = 'rgba(255, 230, 170, 0.7)';
+          particles.push(new FloatingParticle(x, y, radius, speedX, speedY, color, 0.003));
+        }
+      }
+      
+      function resizeCanvas() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+        // пересоздаём частицы, чтобы они корректно заполнили новый размер
+        initParticles();
+      }
+      
+      function drawBackground() {
+        if (!ctx) return;
+        ctx.clearRect(0, 0, width, height);
+        // мягкий дополнительный слой: очень слабый градиент поверх, чтобы частицы не потерялись
+        // но оставляем чистый холст, так как фон body уже имеет тёмный градиент.
+        // рисуем каждую частицу
+        for (let p of particles) {
+          p.update();
+          p.draw(ctx);
+        }
+        
+        // дополнительные "звёздные вспышки" — очень редкие мерцающие точки (эффект оживления)
+        if (Math.random() < 0.02) {
+          for (let i = 0; i < 3; i++) {
+            let x = Math.random() * width;
+            let y = Math.random() * height;
+            ctx.beginPath();
+            ctx.arc(x, y, Math.random() * 2 + 1, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, 235, 140, ${0.2 + Math.random() * 0.4})`;
+            ctx.fill();
+          }
+        }
+      }
+      
+      let animationId = null;
+      function animate() {
+        drawBackground();
+        animationId = requestAnimationFrame(animate);
+      }
+      
+      function setup() {
+        resizeCanvas();
+        window.addEventListener('resize', () => {
+          resizeCanvas();
+        });
+        animate();
+      }
+      
+      setup();
+      
+      // небольшая оптимизация: если вкладка неактивна, можно замедлить, но оставляем как есть, т.к. частицы легкие
+      // дополнительная анимация - лёгкое смещение кольца или сердечка не требуется, но оставим живую атмосферу
+    })();
+    
+    // легкий эффект для кнопки и дополнительная интерактивность (звуков нет, только визуал)
+    document.querySelectorAll('.cta').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        // не блокируем стандартный алерт, просто добавляем маленькую тактильность (можно игнорировать)
+        // просто эффект клика
+        btn.style.transform = 'scale(0.97)';
+        setTimeout(() => { btn.style.transform = ''; }, 120);
+      });
+    });
+  </script>
+</body>
+</html>
